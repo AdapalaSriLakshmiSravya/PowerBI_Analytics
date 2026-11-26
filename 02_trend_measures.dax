@@ -1,0 +1,41 @@
+-- Requires a marked Calendar table with no gaps (see calendar_table.dax)
+
+-- SALES
+Sales PY   = CALCULATE([Total Sales], SAMEPERIODLASTYEAR(Calendar[Date]))
+Sales YoY% = DIVIDE([Total Sales] - [Sales PY], [Sales PY])
+Sales PQ   = CALCULATE([Total Sales], DATEADD(Calendar[Date], -1, QUARTER))
+Sales QoQ% = DIVIDE([Total Sales] - [Sales PQ], [Sales PQ])
+Sales PM   = CALCULATE([Total Sales], DATEADD(Calendar[Date], -1, MONTH))
+Sales MoM% = DIVIDE([Total Sales] - [Sales PM], [Sales PM])
+
+-- PROFIT
+Profit PY   = CALCULATE([Total Profit], SAMEPERIODLASTYEAR(Calendar[Date]))
+Profit YoY% = DIVIDE([Total Profit] - [Profit PY], [Profit PY])
+Profit PQ   = CALCULATE([Total Profit], DATEADD(Calendar[Date], -1, QUARTER))
+Profit QoQ% = DIVIDE([Total Profit] - [Profit PQ], [Profit PQ])
+Profit PM   = CALCULATE([Total Profit], DATEADD(Calendar[Date], -1, MONTH))
+Profit MoM% = DIVIDE([Total Profit] - [Profit PM], [Profit PM])
+
+-- ORDERS
+Orders PY   = CALCULATE([Orders], SAMEPERIODLASTYEAR(Calendar[Date]))
+Orders YoY% = DIVIDE([Orders] - [Orders PY], [Orders PY])
+Orders PQ   = CALCULATE([Orders], DATEADD(Calendar[Date], -1, QUARTER))
+Orders QoQ% = DIVIDE([Orders] - [Orders PQ], [Orders PQ])
+Orders PM   = CALCULATE([Orders], DATEADD(Calendar[Date], -1, MONTH))
+Orders MoM% = DIVIDE([Orders] - [Orders PM], [Orders PM])
+
+-- CUSTOMERS
+Customers PY   = CALCULATE([Customers], SAMEPERIODLASTYEAR(Calendar[Date]))
+Customers YoY% = DIVIDE([Customers] - [Customers PY], [Customers PY])
+Customers PQ   = CALCULATE([Customers], DATEADD(Calendar[Date], -1, QUARTER))
+Customers QoQ% = DIVIDE([Customers] - [Customers PQ], [Customers PQ])
+Customers PM   = CALCULATE([Customers], DATEADD(Calendar[Date], -1, MONTH))
+Customers MoM% = DIVIDE([Customers] - [Customers PM], [Customers PM])
+
+-- QUANTITY
+Quantity PY   = CALCULATE([Total Quantity], SAMEPERIODLASTYEAR(Calendar[Date]))
+Quantity YoY% = DIVIDE([Total Quantity] - [Quantity PY], [Quantity PY])
+Quantity PQ   = CALCULATE([Total Quantity], DATEADD(Calendar[Date], -1, QUARTER))
+Quantity QoQ% = DIVIDE([Total Quantity] - [Quantity PQ], [Quantity PQ])
+Quantity PM   = CALCULATE([Total Quantity], DATEADD(Calendar[Date], -1, MONTH))
+Quantity MoM% = DIVIDE([Total Quantity] - [Quantity PM], [Quantity PM])

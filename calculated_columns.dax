@@ -1,0 +1,67 @@
+-- Add on table 'Employee Master' (Modeling > New column)
+
+Age Band =
+SWITCH(TRUE(),
+    'Employee Master'[Age] < 25, "<25",
+    'Employee Master'[Age] <= 34, "25-34",
+    'Employee Master'[Age] <= 44, "35-44",
+    'Employee Master'[Age] <= 54, "45-54",
+    "55+"
+)
+Age Band Sort =
+SWITCH('Employee Master'[Age Band], "<25",1, "25-34",2, "35-44",3, "45-54",4, 5)
+-- Age Band > Sort by column > Age Band Sort
+
+Salary Band =
+SWITCH(TRUE(),
+    'Employee Master'[MonthlyIncome] < 3000,  "<3K",
+    'Employee Master'[MonthlyIncome] < 5000,  "3K-5K",
+    'Employee Master'[MonthlyIncome] < 10000, "5K-10K",
+    'Employee Master'[MonthlyIncome] < 15000, "10K-15K",
+    ">15K"
+)
+Salary Band Sort =
+SWITCH('Employee Master'[Salary Band], "<3K",1, "3K-5K",2, "5K-10K",3, "10K-15K",4, 5)
+
+Tenure Band =
+SWITCH(TRUE(),
+    'Employee Master'[YearsAtCompany] <= 2,  "0-2",
+    'Employee Master'[YearsAtCompany] <= 5,  "3-5",
+    'Employee Master'[YearsAtCompany] <= 10, "6-10",
+    'Employee Master'[YearsAtCompany] <= 15, "11-15",
+    "16+"
+)
+Tenure Band Sort =
+SWITCH('Employee Master'[Tenure Band], "0-2",1, "3-5",2, "6-10",3, "11-15",4, 5)
+
+Distance Band =
+SWITCH(TRUE(),
+    'Employee Master'[DistanceFromHome] <= 5,  "0-5",
+    'Employee Master'[DistanceFromHome] <= 10, "6-10",
+    'Employee Master'[DistanceFromHome] <= 20, "11-20",
+    "21+"
+)
+Distance Band Sort =
+SWITCH('Employee Master'[Distance Band], "0-5",1, "6-10",2, "11-20",3, 4)
+
+Promotion Flag    = IF('Employee Master'[Due for promotion]  = "Yes", 1, 0)
+Retrenchment Flag = IF('Employee Master'[Will be retrenched] = "Yes", 1, 0)
+Attrition Flag    = IF('Employee Master'[Attrition] = "Yes", 1, 0)
+
+Employee Risk Score =
+    IF('Employee Master'[OverTime] = "Yes", 1, 0) +
+    IF('Employee Master'[JobSatisfaction] <= 2, 1, 0) +
+    IF('Employee Master'[EnvironmentSatisfaction] <= 2, 1, 0) +
+    IF('Employee Master'[WorkLifeBalance] <= 2, 1, 0) +
+    IF('Employee Master'[BusinessTravel] = "Travel_Frequently", 1, 0)
+
+Risk Category =
+SWITCH(TRUE(),
+    'Employee Master'[Employee Risk Score] <= 1, "Low",
+    'Employee Master'[Employee Risk Score] = 2,  "Medium",
+    'Employee Master'[Employee Risk Score] <= 4, "High",
+    "Critical"
+)
+
+Promotion-Retrenchment Conflict =
+    'Employee Master'[Promotion Flag] * 'Employee Master'[Retrenchment Flag]

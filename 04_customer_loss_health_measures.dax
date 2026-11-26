@@ -1,0 +1,50 @@
+-- ===== Customer value =====
+Purchase Frequency = DIVIDE([Orders], [Customers])
+
+Customer Lifespan =
+AVERAGEX(
+    VALUES(Orders[CustomerID]),
+    DATEDIFF(
+        CALCULATE(MIN(Orders[Order Date])),
+        CALCULATE(MAX(Orders[Order Date])),
+        YEAR
+    ) + 1
+)
+
+CLV = [Average Order Value] * [Purchase Frequency] * [Customer Lifespan]
+
+-- ===== Loss-making products =====
+Loss Amount           = CALCULATE([Total Profit], Orders[Profit] < 0)
+Loss Contribution %   = DIVIDE([Loss Amount], CALCULATE([Loss Amount], ALL(Orders[Product Name])))
+Discount % (of Sales) = DIVIDE(SUM(Orders[Discount]), [Total Sales])
+
+-- Number of months in which each product had negative profit
+Months Product Was Loss-Making =
+SUMX(
+    VALUES(Orders[Product Name]),
+    COUNTROWS(
+        FILTER(VALUES(Calendar[Year-Month]), [Total Profit] < 0)
+    )
+)
+
+-- Business rule: loss-making only if negative in 3+ months
+Is Sustained Loss-Maker = IF([Months Product Was Loss-Making] >= 3, 1, 0)
+
+-- ===== Recency and customer health =====
+-- Use MAX(Orders[Order Date]) instead of TODAY() for a fixed historical snapshot
+Analysis Date = TODAY()
+
+Last Purchase Date =
+CALCULATE(MAX(Orders[Order Date]), ALLEXCEPT(Orders, Orders[CustomerID]))
+
+Recency (Days) = DATEDIFF([Last Purchase Date], [Analysis Date], DAY)
+
+Customer Health =
+SWITCH(TRUE(),
+    [Recency (Days)] <= 30,  "Active",
+    [Recency (Days)] <= 60,  "Healthy",
+    [Recency (Days)] <= 90,  "Warning",
+    [Recency (Days)] <= 180, "At Risk",
+    "Churned"
+)
+-- Boundary rule: exactly 90 days = Warning, 91 = At Risk. Confirm with the business.

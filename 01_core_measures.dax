@@ -1,0 +1,11 @@
+Total Sales            = SUM(Orders[Sales])
+Total Profit           = SUM(Orders[Profit])
+Total Quantity         = SUM(Orders[Quantity])
+Orders                 = DISTINCTCOUNT(Orders[OrderID])
+Customers              = DISTINCTCOUNT(Orders[CustomerID])
+Average Order Value    = DIVIDE([Total Sales], [Orders])
+Profit Margin %        = DIVIDE([Total Profit], [Total Sales])
+Sales per Customer     = DIVIDE([Total Sales], [Customers])
+Profit per Customer    = DIVIDE([Total Profit], [Customers])
+
+-- Formats: Sales/Profit/AOV = Currency; Margin = Percentage; Orders/Customers/Quantity = Whole number

@@ -1,0 +1,63 @@
+-- Create a hidden table first:  _Measures = { BLANK() }
+
+Total Employees = DISTINCTCOUNT('Employee Master'[EmployeeNumber])
+
+-- Attrition / retention
+Attrition Employees = CALCULATE([Total Employees], 'Employee Master'[Attrition] = "Yes")
+Attrition Rate      = DIVIDE([Attrition Employees], [Total Employees])
+Retention Employees = [Total Employees] - [Attrition Employees]
+Retention Rate      = DIVIDE([Retention Employees], [Total Employees])
+
+-- Promotion / retrenchment
+Promotion Due          = CALCULATE([Total Employees], 'Employee Master'[Promotion Flag] = 1)
+Promotion Rate         = DIVIDE([Promotion Due], [Total Employees])
+Retrenchment Employees = CALCULATE([Total Employees], 'Employee Master'[Retrenchment Flag] = 1)
+Retrenchment Rate      = DIVIDE([Retrenchment Employees], [Total Employees])
+Promotion + Retrenchment Conflict =
+CALCULATE([Total Employees],
+    'Employee Master'[Promotion Flag] = 1,
+    'Employee Master'[Retrenchment Flag] = 1)
+
+-- Compensation / workforce
+Average Monthly Income = AVERAGE('Employee Master'[MonthlyIncome])
+Median Monthly Income  = MEDIAN('Employee Master'[MonthlyIncome])
+Average Age            = AVERAGE('Employee Master'[Age])
+Average Tenure         = AVERAGE('Employee Master'[YearsAtCompany])
+
+-- Overtime
+Overtime Employees = CALCULATE([Total Employees], 'Employee Master'[OverTime] = "Yes")
+Overtime %         = DIVIDE([Overtime Employees], [Total Employees])
+
+-- Engagement
+Average Job Satisfaction          = AVERAGE('Employee Master'[JobSatisfaction])
+Average Environment Satisfaction  = AVERAGE('Employee Master'[EnvironmentSatisfaction])
+Average Relationship Satisfaction = AVERAGE('Employee Master'[RelationshipSatisfaction])
+Average Work-Life Balance         = AVERAGE('Employee Master'[WorkLifeBalance])
+
+-- Risk and performance
+High Risk Employees           = CALCULATE([Total Employees], 'Employee Master'[Employee Risk Score] >= 3)
+High Risk %                   = DIVIDE([High Risk Employees], [Total Employees])
+Average Performance Rating    = AVERAGE('Employee Master'[PerformanceRating])
+Average Years Since Promotion = AVERAGE('Employee Master'[YearsSinceLastPromotion])
+Average Risk Score            = AVERAGE('Employee Master'[Employee Risk Score])
+
+-- Key alert: department with the highest attrition rate
+Highest Attrition Department =
+VAR T = ADDCOLUMNS(VALUES('Employee Master'[Department]), "@rate", [Attrition Rate])
+RETURN MAXX(TOPN(1, T, [@rate], DESC), 'Employee Master'[Department])
+
+-- Validation measures
+Row Check = COUNTROWS('Employee Master') - DISTINCTCOUNT('Employee Master'[EmployeeNumber])   -- should be 0
+Min Age    = MIN('Employee Master'[Age])
+Min Income = MIN('Employee Master'[MonthlyIncome])
+Invalid Promotion Flags =
+COUNTROWS(FILTER('Employee Master', NOT('Employee Master'[Promotion Flag] IN {0, 1})))
+Invalid Retrenchment Flags =
+COUNTROWS(FILTER('Employee Master', NOT('Employee Master'[Retrenchment Flag] IN {0, 1})))
+Inconsistent Role Tenure =
+COUNTROWS(FILTER('Employee Master', 'Employee Master'[YearsInCurrentRole] > 'Employee Master'[YearsAtCompany]))
+Inconsistent Promotion Tenure =
+COUNTROWS(FILTER('Employee Master', 'Employee Master'[YearsSinceLastPromotion] > 'Employee Master'[YearsAtCompany]))
+
+-- Formats: rates = Percentage (1 dp); income = Currency (0 dp); counts = Whole number;
+-- satisfaction/performance averages = Decimal (2 dp)

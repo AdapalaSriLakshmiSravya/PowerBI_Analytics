@@ -1,0 +1,10 @@
+-- Each measure removes the filter only on its own dimension; other slicers stay active.
+Category Contribution %     = DIVIDE([Total Sales], CALCULATE([Total Sales], ALL(Orders[Category])))
+Sub-Category Contribution % = DIVIDE([Total Sales], CALCULATE([Total Sales], ALL(Orders[Sub-Category])))
+Ship Mode Contribution %    = DIVIDE([Total Sales], CALCULATE([Total Sales], ALL(Orders[Ship Mode])))
+Segment Contribution %      = DIVIDE([Total Sales], CALCULATE([Total Sales], ALL(Orders[Segment])))
+Region Contribution %       = DIVIDE([Total Sales], CALCULATE([Total Sales], ALL(Orders[Region])))
+Year Contribution %         = DIVIDE([Total Sales], CALCULATE([Total Sales], ALL(Calendar[Year])))
+Half Year Contribution %    = DIVIDE([Total Sales], CALCULATE([Total Sales], ALL(Calendar[Half Year])))
+Customer Contribution %     = DIVIDE([Total Sales], CALCULATE([Total Sales], ALL(Orders[CustomerID])))
+Product Contribution %      = DIVIDE([Total Sales], CALCULATE([Total Sales], ALL(Orders[Product Name])))
